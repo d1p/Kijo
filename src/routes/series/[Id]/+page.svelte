@@ -1,4 +1,6 @@
 <script lang="ts">
+  import EpisodeCard from './EpisodeCard.svelte';
+
   import { page } from "$app/stores";
   import { onMount } from "svelte";
   const API_KEY = import.meta.env.VITE_TMDB_ACCESS_TOKEN;
@@ -151,7 +153,7 @@
     </div>
 
     <!-- Movie Info Section -->
-    <div class="bg-gray-800 text-white py-10 px-4">
+    <div class="bg-gray-900 text-white py-10 px-4">
       <div class="container mx-auto max-w-screen-lg">
         <h2 class="text-2xl font-semibold mb-4">About This Movie</h2>
         <p class="text-gray-400 leading-relaxed mb-6">{data.overview}</p>
@@ -177,76 +179,74 @@
       </div>
     </div>
     <!-- Episodes Section with Season Dropdown -->
-    <div class="bg-gray-700 text-white py-10 px-4">
+    <div class="bg-gray-900 text-white py-10 px-4">
       <div class="container mx-auto max-w-screen-lg">
-
+        <h3 class="text-xl font-semibold">{data.number_of_seasons} seasons available</h3>
         <!-- Dropdown Component -->
-<div class="container mx-auto py-6 m">
-    <div class="relative inline-block w-full max-w-lg"> <!-- Made selector wider with max-w-lg -->
-      <!-- Dropdown button -->
-      <div
-        class="bg-gray-800 text-white py-2 px-4 rounded-lg cursor-pointer flex justify-between items-center"
-        on:click={toggleDropdown}
-      >
-        <span>{selectedSeason}</span>
-        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-          <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/>
-        </svg>
-      </div>
-  
-      <!-- Dropdown menu opening upwards with season info and cover images -->
-      {#if isDropdownOpen}
-        <div class="absolute z-10 bg-gray-700 text-white bottom-full mb-2 rounded-lg shadow-lg w-full max-h-[75vh] overflow-y-auto"> <!-- Max height 75% of viewport, scrollable -->
-          {#each data.seasons as season}
-            <div class="flex py-4 px-6 hover:bg-gray-600 cursor-pointer" on:click={showEpisodes(season.season_number, season.name)}>
-              <!-- Season Cover -->
-              <img src="https://image.tmdb.org/t/p/w200{season.poster_path}" alt={season.name} class="w-16 h-16 rounded-lg object-cover mr-4"/>
-  
-              <!-- Season Info -->
-              <div>
-                <h3 class="text-xl font-semibold">{season.name}</h3>
-                <p class="text-gray-400 mt-2">{season.overview}</p>
-              </div>
+        <div class="container mx-auto py-6 m">
+          <div class="relative inline-block w-full max-w-lg">
+            <!-- Made selector wider with max-w-lg -->
+            <!-- Dropdown button -->
+            <div
+              class="bg-gray-800 text-white py-2 px-4 rounded-lg cursor-pointer flex justify-between items-center"
+              on:click={toggleDropdown}
+            >
+              <span>{selectedSeason}</span>
+              <svg
+                class="fill-current h-4 w-4"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                />
+              </svg>
             </div>
-          {/each}
+
+            <!-- Dropdown menu opening upwards with season info and cover images -->
+            {#if isDropdownOpen}
+              <div
+                class="absolute z-10 bg-gray-700 text-white bottom-full mb-2 rounded-lg shadow-lg w-full max-h-[75vh] overflow-y-auto"
+              >
+                <!-- Max height 75% of viewport, scrollable -->
+                {#each data.seasons as season}
+                  <div
+                    class="flex py-4 px-6 hover:bg-gray-600 cursor-pointer"
+                    on:click={showEpisodes(season.season_number, season.name)}
+                  >
+                    <!-- Season Cover -->
+                    <img
+                      src="https://image.tmdb.org/t/p/w200{season.poster_path}"
+                      alt={season.name}
+                      class="w-16 h-16 rounded-lg object-cover mr-4"
+                    />
+
+                    <!-- Season Info -->
+                    <div>
+                      <h3 class="text-xl font-semibold">{season.name}</h3>
+                      <p class="text-gray-400 mt-2">{season.overview}</p>
+                    </div>
+                  </div>
+                {/each}
+              </div>
+            {/if}
+          </div>
         </div>
-      {/if}
-    </div>
-  </div>
-  
 
         <div class="space-y-4">
           <!-- Episode 1 -->
-           {#if episodeData && episodeData.episodes}
-        {#each episodeData.episodes as episode}
-            <div class="flex items-center space-x-4 bg-gray-800 p-4 rounded-lg">
-                <img
-                    src={`https://image.tmdb.org/t/p/w200${episode.still_path}`}
-                    alt={`Episode ${episode.episode_number}`}
-                    class="w-40 h-24 object-cover rounded-md"
-                />
-                <div class="flex-grow">
-                    <h3 class="text-xl font-semibold">{`Episode ${episode.episode_number}: ${episode.name}`}</h3>
-                    <p class="text-gray-400">
-                        {`${episode.runtime} min | ${episode.overview}`}
-                    </p>
-                    <div class="flex items-center space-x-2 mt-2">
-                        <span class="text-gray-400">Air Date:</span>
-                        <span class="text-gray-200">{episode.air_date}</span>
-                    </div>
-                    <div class="flex items-center space-x-2 mt-2">
-                        <span class="text-gray-400">Rating:</span>
-                        <span class="text-gray-200">{Math.round(episode.vote_average * 10)/ 10}</span>
-                    </div>
-                </div>
-                <button
-                    class="bg-yellow-500 px-4 py-2 rounded-lg text-black font-semibold"
-                >
-                    Play
-                </button>
-            </div>
-        {/each}
-    {/if}
+          {#if episodeData && episodeData.episodes}
+            {#each episodeData.episodes as episode}
+                <EpisodeCard poster={episode.still_path} 
+                                episodeNumber={episode.episode_number} 
+                                name={episode.name} 
+                                overview={episode.overview} 
+                                airDate={episode.air_date} 
+                                voteAverage={episode.vote_average} 
+                                runtime={episode.runtime}
+                ></EpisodeCard>
+            {/each}
+          {/if}
         </div>
       </div>
     </div>

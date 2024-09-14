@@ -1,10 +1,11 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import ContentSideScrollBlock from "../components/ContentSideScrollBlock.svelte";
+  import Navbar from "../components/Navbar.svelte";
   let popularMovies: any[] = [];
-    let popularTv: any[] = [];
-    // load api key from .env file
-    const API_KEY = import.meta.env.VITE_TMDB_ACCESS_TOKEN;
+  let popularTv: any[] = [];
+  // load api key from .env file
+  const API_KEY = import.meta.env.VITE_TMDB_ACCESS_TOKEN;
   async function getMediaData(
     type: string = "movie",
     page: number = 1,
@@ -14,8 +15,7 @@
       method: "GET",
       headers: {
         accept: "application/json",
-        Authorization:
-          `Bearer ${API_KEY}`,
+        Authorization: `Bearer ${API_KEY}`,
       },
     };
     try {
@@ -38,6 +38,7 @@
     const data = await getMediaData("movie", page, "popularity.desc");
     const movies = data.results.map((movie: any) => {
       return {
+        id: movie.id,
         posterUrl: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
         title: movie.title,
         rating: movie.vote_average,
@@ -49,11 +50,12 @@
   async function getPopularTv(page: number = 1) {
     console.log("getPopularTv");
     const data = await getMediaData("tv", page, "popularity.desc");
-    const tv = data.results.map((movie: any) => {
+    const tv = data.results.map((c: any) => {
       return {
-        posterUrl: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
-        title: movie.title,
-        rating: movie.vote_average,
+        id: c.id,
+        posterUrl: `https://image.tmdb.org/t/p/w500${c.poster_path}`,
+        title: c.title,
+        rating: c.vote_average,
       };
     });
     popularTv = [...popularTv, ...tv];
@@ -64,15 +66,21 @@
     getPopularTv();
   });
 </script>
+<Navbar />
 
-<ContentSideScrollBlock
-  cards={popularMovies}
-  contentBlockType="Trending movies"
-  loadMore={getPopularMovies}
-/>
+<main class="dark:bg-black">
 
-<ContentSideScrollBlock
-  cards={popularTv}
-  contentBlockType="Trending TV shows"
-  loadMore={getPopularTv}
-/>
+  <ContentSideScrollBlock
+    cards={popularMovies}
+    contentBlockType="Trending movies"
+    loadMore={getPopularMovies}
+    type="movie"
+  />
+
+  <ContentSideScrollBlock
+    cards={popularTv}
+    contentBlockType="Trending TV shows"
+    loadMore={getPopularTv}
+    type="tv"
+  />
+</main>

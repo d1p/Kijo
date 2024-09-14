@@ -4,14 +4,17 @@
   let observer: IntersectionObserver;
   let observedElement: HTMLDivElement;
   type Card = {
+    id: string;
     posterUrl: string;
     title: string;
     rating: number;
+    type: string;
   };
 
   export let cards: Card[] = [];
   export let contentBlockType: string;
   export let loadMore: (page: number) => void;
+  export let type: string;
   // use interaction observer to load more data when the user scrolls to the end of the list
   afterUpdate(() => {
     observer = new IntersectionObserver((entries) => {
@@ -39,12 +42,14 @@
     {contentBlockType}
   </h2>
 
-  <div class="flex flex-nowrap flex-row overflow-x-auto cursor-pointer pb-5">
+  <div class="flex flex-nowrap flex-row overflow-x-auto cursor-pointer space-x-4 pb-5 relative">
     {#each cards as card, index}
       <ContentCard
-        moviePoster={card.posterUrl}
-        movieTitle={card.title}
-        movieRating={card.rating}
+        id={card.id}
+        poster={card.posterUrl}
+        title={card.title}
+        rating={card.rating}
+        type={card.type}
       />
       <!-- load more data when the user scrolls to the end of the list -->
       {#if index === cards.length - 5}

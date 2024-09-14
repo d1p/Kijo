@@ -4,7 +4,7 @@
   let popularMovies: any[] = [];
     let popularTv: any[] = [];
     // load api key from .env file
-    const API_KEY = import.meta.env.TMDB_ACCESS_TOKEN;
+    const API_KEY = import.meta.env.VITE_TMDB_ACCESS_TOKEN;
   async function getMediaData(
     type: string = "movie",
     page: number = 1,

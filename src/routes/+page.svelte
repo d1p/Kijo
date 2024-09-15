@@ -49,7 +49,6 @@
   }
 
   async function getPopularTv(page: number = 1) {
-    console.log("getPopularTv");
     const data = await getMediaData("tv", page, "popularity.desc");
     const tv = data.results.map((c: any) => {
       return {

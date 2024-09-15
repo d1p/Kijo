@@ -25,3 +25,15 @@ model WatchList {
   contentId  String
 }
 
+model WatchHistory {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  showId     String
+  seasonId   String
+  episodeNum String
+  timestamp  DateTime
+  showName   String
+  posterUrl  String
+
+  @@index([showId, seasonId, episodeNum])
+}

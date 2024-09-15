@@ -1,5 +1,5 @@
 <button
-  class="bg-gray-900 text-white rounded-full p-3 absolute top-4 left-4 flex items-center hover:bg-gray-800 transition duration-300 ease-in-out transform hover:scale-110 hover:bg-opacity-50 backdrop-filter backdrop-blur-lg"
+  class="bg-gray-900 text-white rounded-full p-3 absolute top-6 left-6 flex items-center hover:bg-gray-800 transition duration-300 ease-in-out transform hover:scale-110 hover:bg-opacity-50 backdrop-filter backdrop-blur-lg"
   on:click={() => history.back()}
 >
   <svg

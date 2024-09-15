@@ -46,12 +46,12 @@
   <!-- Topbar -->
   <nav class="bg-black fixed top-0 left-0 w-full z-50 shadow-md">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16">
+      <div class="flex items-center justify-between h-20">
         
         <!-- Logo -->
         <div class="flex-shrink-0">
           <a href="/" class="text-xl font-bold logo">
-            Kiyo
+            <img src="/logo.png" alt="Kiko & Jojo" class="h-16" />
           </a>
         </div>
   
@@ -125,23 +125,5 @@
     /* Styling the modal close button */
     button:focus {
       outline: none;
-    }
-
-    @font-face {
-        font-family: 'playwrite_cu';
-        src: url('Playwrite_CU/PlaywriteCU-VariableFont_wght.ttf') format('truetype');
-    }
-
-    .logo {
-        font-family: 'playwrite_cu', sans-serif;
-        transition: all 0.5s;
-        font-size: 1.5rem;
-        color: orangered
-    }
-
-    .logo:hover {
-      transition: all 0.5s;
-
-        color: green;
     }
 </style>

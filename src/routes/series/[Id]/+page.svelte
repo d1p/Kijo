@@ -222,8 +222,10 @@
           <div class="space-y-4">
             {#each episodeData.episodes as episode}
               <EpisodeCard
+                id={Id}
+                season={episode.season_number}
                 poster={episode.still_path}
-                episodeNumber={episode.episode_number}
+                episode={episode.episode_number}
                 name={episode.name}
                 overview={episode.overview}
                 airDate={episode.air_date}

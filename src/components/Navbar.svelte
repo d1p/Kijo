@@ -146,7 +146,7 @@
       {#if searchQuery && searchResults.length > 0}
         <div class="mt-8 grid grid-cols-1 gap-6 max-h-96 overflow-y-auto">
           {#each searchResults as result}
-            <a href={getUrl(result)}>
+            <a href={getUrl(result)} title="{result.title || result.name}">
               <div
                 class="bg-gray-800 text-white rounded-lg p-4 flex items-start transition:fade}"
               >

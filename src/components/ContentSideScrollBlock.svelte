@@ -8,13 +8,13 @@
     posterUrl: string;
     title: string;
     rating: number;
-    type: string;
+    contentType: string;
   };
 
   export let cards: Card[] = [];
   export let contentBlockType: string;
   export let loadMore: (page: number) => void;
-  export let type: string;
+  export let contentType: string;
   // use interaction observer to load more data when the user scrolls to the end of the list
   afterUpdate(() => {
     observer = new IntersectionObserver((entries) => {
@@ -49,7 +49,7 @@
         poster={card.posterUrl}
         title={card.title}
         rating={card.rating}
-        type={card.type}
+        contentType={contentType}
       />
       <!-- load more data when the user scrolls to the end of the list -->
       {#if index === cards.length - 5}

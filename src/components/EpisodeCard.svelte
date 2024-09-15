@@ -1,4 +1,5 @@
 <script lang="ts">
+  import {blur} from "svelte/transition";
   export let episodeNumber: string = "";
   export let name: string = "";
   export let overview: string = "";
@@ -8,7 +9,7 @@
   export let runtime: number = 0;
 </script>
 
-<div class="flex items-center space-x-4 bg-gray-800 p-4 rounded-lg">
+<div class="flex items-center space-x-4 bg-gray-800 p-4 rounded-lg" transition:blur={{ amount: 10 }}>
   <img
     src={`https://image.tmdb.org/t/p/w200${poster}`}
     alt={`Episode ${episodeNumber}`}

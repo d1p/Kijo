@@ -1,8 +1,11 @@
 <script lang="ts">
-  import EpisodeCard from './EpisodeCard.svelte';
+  import BackButton from "../../../components/BackButton.svelte";
+
+  import EpisodeCard from "../../../components/EpisodeCard.svelte";
 
   import { page } from "$app/stores";
   import { onMount } from "svelte";
+  import { fade, blur } from "svelte/transition";
   const API_KEY = import.meta.env.VITE_TMDB_ACCESS_TOKEN;
   const Id = $page.params.Id;
   let selectedSeason = "Select season";
@@ -80,25 +83,7 @@
 
 {#if data}
   <div class="bg-grey-900">
-    <button
-      class="bg-gray-900 text-white rounded-full p-3 absolute top-4 left-4 flex items-center hover:bg-gray-800 transition duration-300 ease-in-out transform hover:scale-110 hover:bg-opacity-50 backdrop-filter backdrop-blur-lg"
-      on:click={() => history.back()}
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        class="w-6 h-6"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M10 19l-7-7m0 0l7-7m-7 7h18"
-        />
-      </svg>
-    </button>
+    <BackButton></BackButton>
     <!-- Hero Section -->
     <div
       class="hero-bg"
@@ -151,8 +136,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Movie Info Section -->
     <div class="bg-gray-900 text-white py-10 px-4">
       <div class="container mx-auto max-w-screen-lg">
         <h2 class="text-2xl font-semibold mb-4">About This Movie</h2>
@@ -181,7 +164,9 @@
     <!-- Episodes Section with Season Dropdown -->
     <div class="bg-gray-900 text-white py-10 px-4">
       <div class="container mx-auto max-w-screen-lg">
-        <h3 class="text-xl font-semibold">{data.number_of_seasons} seasons available</h3>
+        <h3 class="text-xl font-semibold">
+          {data.number_of_seasons} seasons available
+        </h3>
         <!-- Dropdown Component -->
         <div class="container mx-auto py-6 m">
           <div class="relative inline-block w-full max-w-lg">
@@ -206,6 +191,7 @@
             <!-- Dropdown menu opening upwards with season info and cover images -->
             {#if isDropdownOpen}
               <div
+                transition:fade={{ delay: 0, duration: 50 }}
                 class="absolute z-10 bg-gray-700 text-white bottom-full mb-2 rounded-lg shadow-lg w-full max-h-[75vh] overflow-y-auto"
               >
                 <!-- Max height 75% of viewport, scrollable -->
@@ -232,22 +218,21 @@
             {/if}
           </div>
         </div>
-
-        <div class="space-y-4">
-          <!-- Episode 1 -->
-          {#if episodeData && episodeData.episodes}
+        {#if episodeData && episodeData.episodes}
+          <div class="space-y-4">
             {#each episodeData.episodes as episode}
-                <EpisodeCard poster={episode.still_path} 
-                                episodeNumber={episode.episode_number} 
-                                name={episode.name} 
-                                overview={episode.overview} 
-                                airDate={episode.air_date} 
-                                voteAverage={episode.vote_average} 
-                                runtime={episode.runtime}
-                ></EpisodeCard>
+              <EpisodeCard
+                poster={episode.still_path}
+                episodeNumber={episode.episode_number}
+                name={episode.name}
+                overview={episode.overview}
+                airDate={episode.air_date}
+                voteAverage={episode.vote_average}
+                runtime={episode.runtime}
+              ></EpisodeCard>
             {/each}
-          {/if}
-        </div>
+          </div>
+        {/if}
       </div>
     </div>
   </div>

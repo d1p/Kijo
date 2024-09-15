@@ -9,10 +9,11 @@
   /**
    * @type {string}
    */
-   export let type;
+   export let contentType;
 
   function getUrl() {
-    return type === "movie" ? `/movie/${id}` : `/series/${id}`;
+    console.log(contentType);
+    return contentType === "movie" ? `/movie/${id}` : `/series/${id}`;
   }
 </script>
 

@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import ContentSideScrollBlock from "../components/ContentSideScrollBlock.svelte";
   import Navbar from "../components/Navbar.svelte";
+
   let popularMovies: any[] = [];
   let popularTv: any[] = [];
   // load api key from .env file
@@ -68,19 +69,19 @@
 </script>
 <Navbar />
 
-<main class="dark:bg-black">
+<main>
 
   <ContentSideScrollBlock
     cards={popularMovies}
     contentBlockType="Trending movies"
     loadMore={getPopularMovies}
-    type="movie"
+    contentType="movie"
   />
 
   <ContentSideScrollBlock
     cards={popularTv}
     contentBlockType="Trending TV shows"
     loadMore={getPopularTv}
-    type="tv"
+    contentType="tv"
   />
 </main>

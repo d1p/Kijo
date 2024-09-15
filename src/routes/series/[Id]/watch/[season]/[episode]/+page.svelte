@@ -50,11 +50,15 @@ $: embedURL = `https://multiembed.mov/directstream.php?video_id=${Id}&s=${season
 
 <!-- Fullscreen iframe container -->
 <div
-  class="absolute top-0 right-0 h-5/6 w-96 px-2 py-6 custom text-white bg-slate-900 overflow-scroll" 
-  on:mouseenter={() => (opacity = 1)}
-  on:mouseleave={() => (opacity = 0)}
-  style={`opacity: ${opacity}; border-bottom-left-radius: 4px`}
-  role="dialog"
+    class="absolute top-0 right-0 h-5/6 w-96 px-2 py-6 custom text-white bg-slate-900 overflow-scroll" 
+    on:mouseenter={() => (opacity = 1)}
+    on:mouseleave={() => {
+        setTimeout(() => {
+            opacity = 0;
+        }, 2000);
+    }}
+    style={`opacity: ${opacity}; border-bottom-left-radius: 4px`}
+    role="dialog"
 >
   {#if episodeData && episodeData.episodes}
     {#each episodeData.episodes as e}

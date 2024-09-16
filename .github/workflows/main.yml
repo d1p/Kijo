@@ -18,7 +18,7 @@ jobs:
             content_type: application/x-diskcopy
           - os: windows-latest
             output_path: ./src-tauri/target/release/bundle/msi/kijo.msi
-            asset_name: yourapp-windows.msi
+            asset_name: kijo.msi
             content_type: application/x-msi
 
     runs-on: ${{ matrix.os }}
@@ -35,38 +35,22 @@ jobs:
     - name: Set up pnpm
       run: npm install -g pnpm
 
-    - name: Set up Rust
-      uses: actions-rs/toolchain@v1
+    - name: install Rust stable
+      uses: dtolnay/rust-toolchain@stable
       with:
-        toolchain: stable
-        profile: minimal
-        override: true
+        # Those targets are only used on macos runners so it's in an `if` to slightly speed up windows and linux builds.
+        targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
     - name: Install Tauri dependencies
       run: pnpm install
 
-    - name: Build Tauri app
-      run: pnpm run tauri build
-
-    - name: Create GitHub Release
-      id: create_release
-      uses: actions/create-release@v1
+    - uses: tauri-apps/tauri-action@v0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        body: |
-          Automated release for version ${{ github.ref }}.
-        draft: false
-        prerelease: true
-
-    - name: Upload Release Assets
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ${{ matrix.output_path }}  # Dynamic asset path based on OS
-        asset_name: ${{ matrix.asset_name }}   # Dynamic file name
-        asset_content_type: ${{ matrix.content_type }}  # Dynamic content type
+        tagName: app-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
+        releaseName: 'App v__VERSION__'
+        releaseBody: 'See the assets to download this version and install.'
+        releaseDraft: true
+        prerelease: false
+        args: ${{ matrix.args }}

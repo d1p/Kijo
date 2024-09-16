@@ -1,10 +1,20 @@
 <script lang="ts">
 export const prerender = 'auto'
   import { page } from "$app/stores";
+  import { onMount } from "svelte";
   import BackButton from "../../../components/BackButton.svelte";
+  import getIframe from "../../../utils/iframe";
+  import { fetch } from '@tauri-apps/api/http';
+
   const Id = $page.params.Id;
   
-  let embedURL = `https://multiembed.mov/directstream.php?video_id=${Id}&tmdb=1&player_secondary_color=10b981&player_primary_color=10b981&player_sources_toggle_type=2&player_loader=3&player_bg_color=1e1d28`;
+  let embedURL: string = ``
+  onMount(async () => {
+    const url =  getIframe(Id);
+    let response = await fetch(url, {method: 'GET', responseType: 2});
+    embedURL = response.data;
+  });
+
 
 </script>
 

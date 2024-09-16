@@ -3,14 +3,17 @@
   import { page } from "$app/stores";
   import { onMount } from "svelte";
   import BackButton from "../../../../../../components/BackButton.svelte";
-  import { afterNavigate, goto } from "$app/navigation";
+  import { fetch } from '@tauri-apps/api/http';
+
+  import getIframe from "../../../../../../utils/iframe";
+  import { afterNavigate } from "$app/navigation";
   const API_KEY = import.meta.env.VITE_TMDB_ACCESS_TOKEN;
 
   let opacity = 0;
-  const Id = $page.params.Id;
-  const season = $page.params.season;
-  const episode = $page.params.episode;
-$: embedURL = `https://multiembed.mov/directstream.php?video_id=${Id}&s=${season}&e=${episode}&tmdb=1&player_secondary_color=10b981&player_primary_color=10b981&player_sources_toggle_type=2&player_loader=3&player_bg_color=1e1d28`;
+  $: Id = $page.params.Id;
+  $: season = $page.params.season;
+  $: episode = $page.params.episode;
+  $: embedURL = "";
   let episodeData: { episodes: any[] } = { episodes: [] };
 
   async function showEpisodes() {
@@ -24,28 +27,29 @@ $: embedURL = `https://multiembed.mov/directstream.php?video_id=${Id}&s=${season
     try {
       const response = await fetch(
         `https://api.themoviedb.org/3/tv/${Id}/season/${season}?language=en-US`,
-        options
+         { ...options }
       );
-      episodeData = await response.json();
+      episodeData = response.data;
     } catch (error) {
       console.error("Fetch error:", error);
       throw error; // Re-throw the error to be handled by the caller
     }
   }
 
+  async function setIframe() {
+    const url = getIframe(Id, season, episode);
+    let response = await fetch(url, { method: "GET", responseType: 2 });
+    embedURL = response.data;
+  }
+
   onMount(async () => {
     await showEpisodes();
   });
-  afterNavigate(() => {
-        const playerDiv = document.getElementById("player");
-        playerDiv.innerHTML = "";
-        const iframe = document.createElement("iframe");
-        iframe.src = embedURL;
-        iframe.allowFullScreen = true;
-        iframe.title = "Embedded Video";
-        iframe.className = "w-full aspect-w-16 aspect-h-9 h-full";
-        playerDiv.appendChild(iframe);
-  })
+
+  afterNavigate(async () => {
+    await setIframe();
+  });
+
 </script>
 
 <!-- Fullscreen iframe container -->
@@ -81,12 +85,18 @@ $: embedURL = `https://multiembed.mov/directstream.php?video_id=${Id}&s=${season
 <div class="relative w-full h-screen">
   <!-- Back button and info, only visible when showUI is true -->
   <div class="absolute top-0 left-0 h-64">
-    <BackButton />
+    <BackButton url="/series/{Id}"/>
   </div>
+  <iframe
+  src={embedURL}
+  allowFullScreen
+  title="Player"
+  class="w-full h-full"
+></iframe>
+</div>
 
   <!-- Iframe takes the entire screen space -->
-<div id="player" class="w-full h-full"></div>
-</div>
+
 
 <style>
   /* Optional: Smooth fade-in and fade-out transition */

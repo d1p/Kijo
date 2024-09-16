@@ -83,7 +83,7 @@
 
 {#if data}
   <div class="bg-grey-900">
-    <BackButton></BackButton>
+    <BackButton url="/"></BackButton>
     <!-- Hero Section -->
     <div
       class="hero-bg"

@@ -15,6 +15,11 @@
       "shell": {
         "all": false,
         "open": true
+      },
+      "http": {
+        "all": false,
+        "request": true,
+        "scope": ["https://getsuperembed.link/*", "https://api.themoviedb.org/*"]
       }
     },
     "windows": [

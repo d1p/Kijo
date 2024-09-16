@@ -28,7 +28,7 @@ jobs:
         run: npm install -g pnpm
       - name: install app dependencies and build it
         run: pnpm install && pnpm build
-      - uses: tauri-apps/tauri-action@v0
+      - uses: tauri-apps/tauri-action@dev
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:

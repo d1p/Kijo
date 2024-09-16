@@ -1,35 +1,72 @@
-name: 'publish'
+name: Release  App
+permissions:
+  contents: write
 on:
   push:
-    branches:
-      - release
-
+    tags:
+      - 'v*.*.*'  # Trigger workflow only for version tags
 jobs:
-  publish-tauri:
+  release:
+    name: Release Tauri App
     strategy:
-      fail-fast: false
       matrix:
-        platform: [macos-latest, windows-latest]
+        os: [macos-latest, windows-latest]  # Add both Windows and macOS
+        include:
+          - os: macos-latest
+            output_path: ./src-tauri/target/release/bundle/macos/kijo.dmg
+            asset_name: yourapp-macos.dmg
+            content_type: application/x-diskcopy
+          - os: windows-latest
+            output_path: ./src-tauri/target/release/bundle/msi/kijo.msi
+            asset_name: yourapp-windows.msi
+            content_type: application/x-msi
 
-    runs-on: ${{ matrix.platform }}
+    runs-on: ${{ matrix.os }}
+
     steps:
-      - uses: actions/checkout@v2
-      - name: setup node
-        uses: actions/setup-node@v1
-        with:
-          node-version: 22
-      - name: install Rust stable
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-      - name: install app dependencies and build it
-        run: pnpm && pnpm build
-      - uses: tauri-apps/tauri-action@v0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tagName: app-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version
-          releaseName: 'App v__VERSION__'
-          releaseBody: 'See the assets to download this version and install.'
-          releaseDraft: true
-          prerelease: true
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '22.x'  # Use Node.js v22
+
+    - name: Set up pnpm
+      run: npm install -g pnpm
+
+    - name: Set up Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        profile: minimal
+        override: true
+
+    - name: Install Tauri dependencies
+      run: pnpm install
+
+    - name: Build Tauri app
+      run: pnpm run tauri build
+
+    - name: Create GitHub Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: |
+          Automated release for version ${{ github.ref }}.
+        draft: false
+        prerelease: true
+
+    - name: Upload Release Assets
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ${{ matrix.output_path }}  # Dynamic asset path based on OS
+        asset_name: ${{ matrix.asset_name }}   # Dynamic file name
+        asset_content_type: ${{ matrix.content_type }}  # Dynamic content type
